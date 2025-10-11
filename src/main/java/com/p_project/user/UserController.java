@@ -20,7 +20,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/users")
@@ -34,7 +33,6 @@ public class UserController {
 
     @GetMapping("/list")
     public List<UserEntity> list() {
-        System.out.println("UserController list");
         return repo.findAll();
     }
 
@@ -92,7 +90,7 @@ public class UserController {
         return "로그아웃되었습니다.";
     }
 
-    
+
     //일반회원 로그인시
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestParam String username,

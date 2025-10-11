@@ -1,4 +1,3 @@
-// src/main/java/com/example/demo/dto/UserDTO.java
 package com.example.demo.dto;
 
 import com.example.demo.entity.UserEntity;
@@ -53,6 +52,5 @@ public class UserDTO {
                 .deletedAt(e.getDeletedAt())
                 .build();
     }
-
 
 }

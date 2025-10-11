@@ -1,4 +1,3 @@
-// com/example/demo/entity/UserEntity.java
 package com.example.demo.entity;
 
 import com.example.demo.dto.UserDTO;
@@ -17,16 +16,17 @@ import java.time.LocalDateTime;
 @Table(name = "`user`") // user 예약어 회피
 public class UserEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column(nullable = false, length = 45)
     private String name;
 
     @Column(nullable = false, length = 1)
-    private String gender; // 'M'/'F' 등. 모르면 'U' 같은 기본값
+    private String gender; // 'M'/'F' 등
 
-    @Column(nullable = false, length = 200)
+    @Column(nullable = false, length = 45)
     private String nickname;
 
     // ====== OAuth 추가 필드 ======
@@ -43,6 +43,7 @@ public class UserEntity {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
@@ -64,4 +65,6 @@ public class UserEntity {
                 .deletedAt(dto.getDeletedAt())
                 .build();
     }
+
+
 }
