@@ -64,6 +64,13 @@ public class UserController {
         return repo.save(u);
     }
 
+    @GetMapping("/my")
+    @ResponseBody
+    public String myAPI(){
+
+        return "my route";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpServletResponse response) {
 
@@ -127,5 +134,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("인증 실패");
         }
     }
+
+
 
 }
