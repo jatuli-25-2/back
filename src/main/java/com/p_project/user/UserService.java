@@ -17,4 +17,17 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+    public void findByNickname(UserDTO userDTO){
+        //repository 의 save 메서드 호출
+        System.out.println("\n\n\n\nuserDTO in userService : " + userDTO);
+        UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        System.out.println("\n\n\n\nUserEntity in userService" + userEntity);
+        userRepository.save(userEntity);
+    }
+
+    public String findNickNameByUserId(Long userId){
+
+        return userRepository.findById(userId).getNickname();
+    }
+
 }
