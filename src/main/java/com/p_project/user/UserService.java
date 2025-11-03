@@ -3,6 +3,8 @@ package com.p_project.user;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service //스프링이 관리해주는 객체
 @RequiredArgsConstructor //controller 와 같이 final 멤버변수 생성자 만드는 역할
 public class UserService {
@@ -28,6 +30,11 @@ public class UserService {
     public String findNickNameByUserId(Long userId){
 
         return userRepository.findById(userId).getNickname();
+    }
+
+    public Optional<UserEntity> findByNickname(String nickName){
+
+        return userRepository.findByNickname(nickName);
     }
 
 }

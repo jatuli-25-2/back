@@ -13,10 +13,9 @@ public class HomeController {
 
     private final HomeService homeService;
 
-    //  임시 홈
     @GetMapping("/{userId}")
     public ResponseEntity<HomeDTO> getHome(@PathVariable Long userId){
-        log.info("userId: " + userId + " getHome 들어옴");
+        log.info("in HomeController: getHome");
         HomeDTO response = homeService.getHome(userId);
 
         return ResponseEntity.ok(response);
