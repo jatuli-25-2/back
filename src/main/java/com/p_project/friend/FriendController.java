@@ -16,8 +16,16 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/")
+    @PostMapping("/add")
     public ResponseEntity<Void> addFriend(@RequestBody FriendDTO friendDTO){
+        log.info("in FriendController: addFriend");
+
+        friendService.addFriend(friendDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/acept")
+    public ResponseEntity<Void> aceptFriendRequest(@RequestBody FriendDTO friendDTO){
         log.info("in FriendController: addFriend");
 
         friendService.addFriend(friendDTO);
