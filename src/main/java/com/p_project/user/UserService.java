@@ -1,24 +1,29 @@
 package com.p_project.user;
 
+import com.p_project.jwt.JWTUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Service //스프링이 관리해주는 객체
 @RequiredArgsConstructor //controller 와 같이 final 멤버변수 생성자 만드는 역할
 public class UserService {
 
     private final UserRepository userRepository; //디펜던시 추가
     private final PasswordEncoder passwordEncoder;
+    private final JWTUtil jwtUtil;
 
     public void save(UserDTO userDTO){
         //repository 의 save 메서드 호출
@@ -62,4 +67,36 @@ public class UserService {
         response.put("message", message);
         return response;
     }
+
+
+    public String logoutUser(HttpServletRequest request, HttpServletResponse response) {
+        String userEmail = null;
+
+        try {
+            String accessToken = jwtUtil.extractAccessToken(request);
+
+            if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
+                userEmail = jwtUtil.getUsername(accessToken);
+            }
+
+        } catch (Exception e) {
+            //jwt 파싱중오류처리
+            log.warn("JWT 토큰 파싱 중 오류 발생: {}", e.getMessage());
+        }
+
+        //토큰 삭제 로직
+        clearSecurityContext();
+        clearAccessToken(response);
+        clearRefreshToken(response);
+
+        if (userEmail != null) {
+            log.info("{} 님이 로그아웃했습니다.", userEmail);
+            return userEmail + " 님이 로그아웃했습니다.";
+        } else {
+            log.info("로그아웃되었습니다. (사용자 정보 없음)");
+            return "로그아웃되었습니다.";
+        }
+    }
+
+
 }

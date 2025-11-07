@@ -2,6 +2,7 @@ package com.p_project.user;
 
 import com.p_project.jwt.JWTUtil;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,20 +51,9 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public String logout(HttpServletResponse response) {
-
-        log.info("user controller : user logout");
-
-        // SecurityContext 초기화
-        userService.clearSecurityContext();
-
-        // Access Token 쿠키 삭제
-        userService.clearAccessToken(response);
-
-        // Refresh Token 쿠키 삭제
-        userService.clearRefreshToken(response);
-
-        return "로그아웃되었습니다.";
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        String message = userService.logoutUser(request, response);
+        return ResponseEntity.ok(message);
     }
 
 
@@ -123,7 +113,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/reset-password")
     public ResponseEntity<Map<String, String>> resetPassword(@RequestBody PasswordResetDTO dto) {
 
@@ -133,7 +122,5 @@ public class UserController {
 
         return ResponseEntity.ok(response);
     }
-
-
 
 }
