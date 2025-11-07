@@ -17,7 +17,7 @@ public class WritingSessionEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "userId", nullable = false)
+    @Column(name = "user_id", nullable = false)
     private Long userId;
 
     @Enumerated(EnumType.STRING)
@@ -28,7 +28,16 @@ public class WritingSessionEntity {
     private String status;
 
     @Column(length = 45, nullable = false)
+    private String genre;
+
+    @Column(length = 45, nullable = false)
+    private String emotion;
+
+    @Column(length = 45, nullable = false)
     private String title;
+
+    @Column(columnDefinition = "TEXT")
+    private String content;
 
     @Column(name = "created_at", nullable = false, updatable = false,
             columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

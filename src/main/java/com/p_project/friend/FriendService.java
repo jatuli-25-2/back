@@ -1,5 +1,7 @@
 package com.p_project.friend;
 
+import com.p_project.calendar.CalendarDTO;
+import com.p_project.calendar.CalendarService;
 import com.p_project.user.UserDTO;
 import com.p_project.user.UserEntity;
 import com.p_project.user.UserService;
@@ -8,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Slf4j
@@ -17,6 +20,7 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final UserService userService;
+    private final CalendarService calendarService;
 
     public void addFriend(FriendDTO friendDTO){
 
@@ -53,7 +57,7 @@ public class FriendService {
         }
     }
 
-    @Transactional
+    @Transactional // 하나의 트랜잭션으로 묶어서 실행
     public void sendFriendRequest(Long fromUserId, String email) {
         friendRepository.sendFriendRequest(fromUserId, email);
     }
@@ -61,6 +65,10 @@ public class FriendService {
     @Transactional
     public void deleteFriendRequest(Long fromUserId, Long toUserId) {
         friendRepository.deleteFriendRequest(fromUserId, toUserId);
+    }
+
+    public CalendarDTO getFriendCalendarSummary(Long userId, Long friendId, LocalDate date) {
+        return calendarService.getFriendCalendarSummary(userId, friendId, date);
     }
 
 }
