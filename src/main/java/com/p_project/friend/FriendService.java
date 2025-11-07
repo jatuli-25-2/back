@@ -1,9 +1,13 @@
 package com.p_project.friend;
 
+import com.p_project.user.UserDTO;
+import com.p_project.user.UserEntity;
 import com.p_project.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -25,5 +29,11 @@ public class FriendService {
         friendRepository.save(friendEntity);
     }
 
+    public List<UserDTO> getMutualFriends(Long userId) {
+        List<UserEntity> users = friendRepository.findMutualFriends(userId);
 
+        return users.stream()
+                .map(UserDTO::fromEntity)
+                .toList();
+    }
 }
