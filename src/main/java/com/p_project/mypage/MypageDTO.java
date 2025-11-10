@@ -7,15 +7,16 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MypageDTO {
+public class MyPageDTO {
 
-    private Integer weekDiaryNum;
-    private Integer weekBookReportNum;
-    private Integer weekTotalNum;
+    private Long userId;
     private String email;
     private String nickName;
     private String profileURL;
 
-
-
+    public void updateProfile(String nickname, String email, String profileURL) {
+        this.nickName = nickname;
+        this.email = email;
+        this.profileURL = profileURL;
+    }
 }

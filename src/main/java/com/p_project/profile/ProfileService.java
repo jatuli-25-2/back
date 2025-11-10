@@ -19,9 +19,9 @@ public class ProfileService {
 
     private final ProfileRepository profileRepository;
 
-    // 실제 파일이 저장될 로컬 경로 (서버 환경에 맞게 조정)
+    // 실제 파일이 저장될 로컬 경로 (서버 환경에 맞게 조정) TODO: 서버 배포시 경로 수정
     private static final String UPLOAD_DIR = "C:/Users/CHOYEJI/Project/P-Project/Back/res/img/";
-    // 접근 가능한 기본 URL (개발 중엔 localhost, 배포 시엔 도메인)
+    // 접근 가능한 기본 URL (개발 중엔 localhost, 배포 시엔 도메인) TODO: 배포시 서버 수정
     private static final String BASE_URL = "http://localhost:8080/img/";
 
     public String uploadProfile(Long userId, MultipartFile file) {
@@ -44,7 +44,7 @@ public class ProfileService {
             String imageUrl = BASE_URL + newFileName;
 
             // DB에 저장 (이미 있으면 업데이트)
-            Optional<ProfileEntity> existingProfile = profileRepository.findByUserId(userId);
+            Optional<ProfileEntity> existingProfile = getProfile(userId);
             ProfileEntity profile = existingProfile.orElseGet(() -> new ProfileEntity());
             profile.setUserId(userId);
             profile.setImageUrl(imageUrl);
@@ -57,6 +57,11 @@ public class ProfileService {
         } catch (IOException e) {
             throw new RuntimeException("파일 업로드 실패: " + e.getMessage(), e);
         }
+    }
+
+    public Optional<ProfileEntity> getProfile(Long userId) {
+
+            return profileRepository.findByUserId(userId);
     }
 
 }
