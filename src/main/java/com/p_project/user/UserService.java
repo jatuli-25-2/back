@@ -17,9 +17,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service //스프링이 관리해주는 객체
@@ -152,5 +152,23 @@ public class UserService {
                 .body("회원가입이 완료되었습니다.");
     }
 
+
+    public void findByNickname(UserDTO userDTO){
+        //repository 의 save 메서드 호출
+        System.out.println("\n\n\n\nuserDTO in userService : " + userDTO);
+        UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        System.out.println("\n\n\n\nUserEntity in userService" + userEntity);
+        userRepository.save(userEntity);
+    }
+
+    public String findNickNameByUserId(Long userId){
+
+        return userRepository.findById(userId).getNickname();
+    }
+
+    public Optional<UserEntity> findByNickname(String nickName){
+
+        return userRepository.findByNickname(nickName);
+    }
 
 }
