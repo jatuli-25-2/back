@@ -1,4 +1,4 @@
-package com.p_project.admin.dashboard;
+package com.p_project.admin.stats;
 
 import lombok.*;
 

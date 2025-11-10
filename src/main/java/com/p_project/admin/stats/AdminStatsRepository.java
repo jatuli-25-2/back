@@ -1,4 +1,4 @@
-package com.p_project.admin.dashboard;
+package com.p_project.admin.stats;
 
 import com.p_project.writing.WritingSessionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
-public interface AdminDashBoardRepository extends JpaRepository<WritingSessionEntity, Long> {
+public interface AdminStatsRepository extends JpaRepository<WritingSessionEntity, Long> {
 
     // 작성 시간대별 게시글 수
     @Query(value = """

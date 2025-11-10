@@ -1,4 +1,4 @@
-package com.p_project.admin.dashboard;
+package com.p_project.admin.stats;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,20 +9,20 @@ import java.util.List;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class AdminDashBoardService {
+public class AdminStatsService {
 
-    private final AdminDashBoardRepository adminDashBoardRepository;
+    private final AdminStatsRepository adminStatsRepository;
 
     public UserStatisticsDTO getUserStatistics() {
 
-        List<TimeDistributionDTO> timeStats = adminDashBoardRepository.getWritingCountGroupedByHour().stream()
+        List<TimeDistributionDTO> timeStats = adminStatsRepository.getWritingCountGroupedByHour().stream()
                 .map(row -> new TimeDistributionDTO(
                         ((Number) row[0]).intValue(),
                         ((Number) row[1]).longValue()
                 ))
                 .toList();
 
-        List<AgeGroupStatsDTO> ageStats = adminDashBoardRepository.getUserCountByAgeGroupRaw().stream()
+        List<AgeGroupStatsDTO> ageStats = adminStatsRepository.getUserCountByAgeGroupRaw().stream()
                 .map(row -> new AgeGroupStatsDTO(
                         (String) row[0],
                         ((Number) row[1]).longValue()

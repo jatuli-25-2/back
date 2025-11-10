@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface DiaryRepository extends JpaRepository<WritingSessionEntity, Long> {
 
-    int countByUserIdAndTypeAndStatusAndDeletedAtIsNull(Long userId, WritingSessionEntity.Type type, String status);
+    int countByUserIdAndTypeAndStatusAndDeletedAtIsNull(Long userId, WritingSessionEntity.Type type, WritingSessionEntity.WritingStatus status);
 
     @Query(value = """
         SELECT *

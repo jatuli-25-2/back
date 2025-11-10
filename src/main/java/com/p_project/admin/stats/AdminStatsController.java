@@ -1,4 +1,4 @@
-package com.p_project.admin.dashboard;
+package com.p_project.admin.stats;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin/dashboard")
-public class AdminDashBoardController {
-    private final AdminDashBoardService adminDashBoardService;
+public class AdminStatsController {
+    private final AdminStatsService adminStatsService;
 
     @GetMapping("/userStats")
     public ResponseEntity<UserStatisticsDTO> getUserStatistics() {
-        UserStatisticsDTO result = adminDashBoardService.getUserStatistics();
+        UserStatisticsDTO result = adminStatsService.getUserStatistics();
         return ResponseEntity.ok(result);
     }
 
