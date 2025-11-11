@@ -82,11 +82,11 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
             // Refresh Token 유효 → Access Token 재발급
-            String username = jwtUtil.getUsername(refreshToken);
+            String userEmail = jwtUtil.getUserEmail(refreshToken);
             String role = jwtUtil.getRole(refreshToken);
 
             // 새 Access Token 생성 (예: 1시간)
-            String newAccessToken = jwtUtil.createJwt(username, role, 1000L * 60 * 60);
+            String newAccessToken = jwtUtil.createJwt(userEmail, role, 1000L * 60 * 60);
 
             // Bearer 없이 순수 토큰만 쿠키에 저장 -> 쿠키에 저장할때 띄어쓰기있으면 http에러나기 때문
             Cookie newAccessCookie = new Cookie("Authorization", newAccessToken);
@@ -107,11 +107,11 @@ public class JWTFilter extends OncePerRequestFilter {
     }
 
     private void setAuthentication(String token) {
-        String username = jwtUtil.getUsername(token);
+        String email = jwtUtil.getUserEmail(token);
         String role = jwtUtil.getRole(token);
 
         UserDTO userDTO = new UserDTO();
-        userDTO.setNickname(username);
+        userDTO.setEmail(email);
         userDTO.setRole(role);
 
         CustomOAuth2User customUser = new CustomOAuth2User(userDTO);

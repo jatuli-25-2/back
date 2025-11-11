@@ -25,15 +25,14 @@ public class JWTUtil {
         key = Keys.hmacShaKeyFor(byteSecretKey);
     }
 
-    public String getEmail(String token) {
-        return Jwts.parserBuilder().setSigningKey(key).build()
-                .parseClaimsJws(token).getBody()
-                .get("email", String.class);
-    }
+//    public String getUserEmail(String token) {
+//        if (token.startsWith("Bearer ")) token = token.substring(7);
+//        return getClaims(token).get("email", String.class);
+//    }
 
-    public String getUsername(String token) {
+    public String getUserEmail(String token) {
 
-        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("username", String.class);
+        return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().get("userEmail", String.class);
     }
 
     public String getRole(String token) {
@@ -69,4 +68,5 @@ public class JWTUtil {
         }
         return null;
     }
+
 }

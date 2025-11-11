@@ -75,7 +75,7 @@ public class UserService {
             String accessToken = jwtUtil.extractAccessToken(request);
 
             if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
-                userEmail = jwtUtil.getUsername(accessToken);
+                userEmail = jwtUtil.getUserEmail(accessToken);
             }
 
         } catch (Exception e) {
@@ -97,15 +97,15 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<?> login(String username, String password, HttpServletResponse response) {
+    public ResponseEntity<?> login(String userEmail, String password, HttpServletResponse response) {
 
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
+                    new UsernamePasswordAuthenticationToken(userEmail, password)
             );
             String role = authentication.getAuthorities().iterator().next().getAuthority();
-            String accessToken = jwtUtil.createJwt(username, role, 1000L * 60 * 60); // 1시간
-            String refreshToken = jwtUtil.createJwt(username, role, 1000L * 60 * 60 * 24 * 14); // 14일
+            String accessToken = jwtUtil.createJwt(userEmail, role, 1000L * 60 * 60); // 1시간
+            String refreshToken = jwtUtil.createJwt(userEmail, role, 1000L * 60 * 60 * 24 * 14); // 14일
 
             Cookie accessCookie = new Cookie("Authorization", "Bearer " + accessToken);
             accessCookie.setHttpOnly(true);
