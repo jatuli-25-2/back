@@ -14,9 +14,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -75,7 +75,7 @@ public class UserService {
             String accessToken = jwtUtil.extractAccessToken(request);
 
             if (accessToken != null && !jwtUtil.isExpired(accessToken)) {
-                userEmail = jwtUtil.getUserEmail(accessToken);
+                userEmail = jwtUtil.getUsername(accessToken);
             }
 
         } catch (Exception e) {
@@ -97,15 +97,15 @@ public class UserService {
         }
     }
 
-    public ResponseEntity<?> login(String userEmail, String password, HttpServletResponse response) {
+    public ResponseEntity<?> login(String email, String password, HttpServletResponse response) {
 
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userEmail, password)
+                    new UsernamePasswordAuthenticationToken(email, password)
             );
             String role = authentication.getAuthorities().iterator().next().getAuthority();
-            String accessToken = jwtUtil.createJwt(userEmail, role, 1000L * 60 * 60); // 1시간
-            String refreshToken = jwtUtil.createJwt(userEmail, role, 1000L * 60 * 60 * 24 * 14); // 14일
+            String accessToken = jwtUtil.createJwt(email, role, 1000L * 60 * 60); // 1시간
+            String refreshToken = jwtUtil.createJwt(email, role, 1000L * 60 * 60 * 24 * 14); // 14일
 
             Cookie accessCookie = new Cookie("Authorization", "Bearer " + accessToken);
             accessCookie.setHttpOnly(true);
@@ -155,15 +155,23 @@ public class UserService {
 
     public void findByNickname(UserDTO userDTO){
         //repository 의 save 메서드 호출
+        System.out.println("\n\n\n\nuserDTO in userService : " + userDTO);
         UserEntity userEntity = UserEntity.toUserEntity(userDTO);
+        System.out.println("\n\n\n\nUserEntity in userService" + userEntity);
         userRepository.save(userEntity);
     }
 
-    public String findNickNameByUserId(Long userId){
+    public Map<String, String> findNameAndNickNameByUserId(Long userId){
 
         return userRepository.findById(userId)
-                .map(UserEntity::getNickname)
-                .orElse("Unknown");
+                .map(user -> Map.of(
+                        "name", user.getName(),
+                        "nickName", user.getNickname()
+                ))
+                .orElse(Map.of(
+                        "name", "Unknown",
+                        "nickName", "Unknown"
+                ));
     }
 
     public Optional<UserEntity> findByNickname(String nickName){
