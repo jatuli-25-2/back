@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/myapge")
+@RequestMapping("/api/mypage")
 public class MyPageController {
 
     private final MyPageService mypageService;
