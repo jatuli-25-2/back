@@ -13,4 +13,5 @@ public interface WritingSessionRepository extends JpaRepository<WritingSessionEn
             "AND (w.type = 'diary' OR w.type = 'book') " +
             "ORDER BY w.createdAt DESC")
     List<WritingSessionEntity> findRecentWritingSessions(Long userId, Pageable pageable);
+
 }
