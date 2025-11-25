@@ -21,7 +21,6 @@ public class JWTUtil {
 
     public JWTUtil(@Value("${spring.jwt.secret}")String secret) {
 
-
         byte[] byteSecretKey = Decoders.BASE64.decode(secret);
         key = Keys.hmacShaKeyFor(byteSecretKey);
     }
