@@ -2,8 +2,10 @@ package com.p_project.mypage;
 
 import com.p_project.oauth2.CustomOAuth2User;
 import com.p_project.profile.ProfileDTO;
+import com.p_project.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,12 +44,22 @@ public class MyPageController {
             @RequestBody MyPageUpdateDTO myPageDTO) {
 
         try {
+            if (userService.exitsEmail(myPageDTO.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("이미 사용 중인 이메일입니다.");
+            }
+            if (userService.exitsNickName(myPageDTO.getNickName())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("이미 사용 중인 닉네임입니다.");
+            }
+            CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
+            myPageDTO.setUserId(principal.getUserId());
             mypageService.updateMyPage(myPageDTO);
         } catch (Exception e){
             log.error("마이페이지 업데이트 실패: {}",e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-            return ResponseEntity.ok(200);
+            return ResponseEntity.ok("마이페이지 업데이트 성공");
     }
 
 }

@@ -55,7 +55,7 @@ public class ProfileService {
             return imageUrl;
 
         } catch (IOException e) {
-            throw new RuntimeException("파일 업로드 실패: " + e.getMessage(), e);
+            throw new FileUploadException("파일 업로드 중 오류가 발생했습니다.");
         }
     }
 
@@ -64,4 +64,9 @@ public class ProfileService {
             return profileRepository.findByUserId(userId);
     }
 
+    public static class FileUploadException extends RuntimeException {
+        public FileUploadException(String message) {
+            super(message);
+        }
+    }
 }
