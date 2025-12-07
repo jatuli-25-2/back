@@ -16,7 +16,7 @@ public class HomeController {
     private final HomeService homeService;
     private final TokenDecodeService tokenDecodeService;
 
-    @PostMapping
+    @GetMapping
     public ResponseEntity<HomeDTO> getHome(@RequestBody TokenRequest request){
         log.info("in HomeController: getHome");
         HomeDTO response = homeService.getHome(
