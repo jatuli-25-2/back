@@ -69,7 +69,7 @@ public class AiService {
                 .content(res.getFinalText())
                 .emotion(res.getDominantEmotion())
                 .recommendTitle(res.getMusic().get("recommendation"))
-                .recommendGenre("Etc")
+                .recommendGenre(res.getMusic().get("genre"))
                 .build();
     }
 }
