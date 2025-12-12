@@ -2,6 +2,7 @@ package com.p_project.mypage;
 
 import com.p_project.oauth2.CustomOAuth2User;
 import com.p_project.profile.ProfileDTO;
+import com.p_project.user.UserEntity;
 import com.p_project.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,23 +44,27 @@ public class MyPageController {
             Authentication auth,
             @RequestBody MyPageUpdateDTO myPageDTO) {
 
-        try {
-            if (userService.exitsEmail(myPageDTO.getEmail())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("이미 사용 중인 이메일입니다.");
-            }
-            if (userService.exitsNickName(myPageDTO.getNickName())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT)
-                        .body("이미 사용 중인 닉네임입니다.");
-            }
-            CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
-            myPageDTO.setUserId(principal.getUserId());
-            mypageService.updateMyPage(myPageDTO);
-        } catch (Exception e){
-            log.error("마이페이지 업데이트 실패: {}",e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
+        Long userId = principal.getUserId();
+        myPageDTO.setUserId(userId);
+
+        UserEntity user = userService.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("존재하지 않는 사용자"));
+
+        if (!myPageDTO.getEmail().equals(user.getEmail())
+                && userService.existsEmail(myPageDTO.getEmail())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("이미 사용 중인 이메일입니다.");
         }
-            return ResponseEntity.ok("마이페이지 업데이트 성공");
+
+        if (!myPageDTO.getNickName().equals(user.getNickname())
+                && userService.existsNickName(myPageDTO.getNickName())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body("이미 사용 중인 닉네임입니다.");
+        }
+
+        mypageService.updateMyPage(myPageDTO);
+        return ResponseEntity.ok("마이페이지 업데이트 성공");
     }
 
 }

@@ -33,6 +33,9 @@ public class UserService {
     private final JWTUtil jwtUtil;
     private final ResourcePatternResolver resourcePatternResolver;
 
+    public Optional<UserEntity> findById(Long userId){
+        return userRepository.findById(userId);
+    }
 
     public void resetPassword(PasswordResetDTO dto) {
         UserEntity user = userRepository.findByEmail(dto.getEmail())
@@ -188,7 +191,7 @@ public class UserService {
         return userRepository.findByNickname(nickName);
     }
 
-    public boolean exitsEmail(String email) {
+    public boolean existsEmail(String email) {
 
         boolean result = false;
         if (userRepository.findByEmail(email).isPresent()) {
@@ -197,7 +200,7 @@ public class UserService {
         return result;
     }
 
-    public boolean exitsNickName(String nickName) {
+    public boolean existsNickName(String nickName) {
 
         boolean result = false;
         if (userRepository.findByNickname(nickName).isPresent()) {
