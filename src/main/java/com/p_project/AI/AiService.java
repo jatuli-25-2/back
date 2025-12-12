@@ -51,7 +51,6 @@ public class AiService {
                 .build();
     }
 
-
     // -----------------------------
     // 최종 글 생성
     // -----------------------------
@@ -65,11 +64,24 @@ public class AiService {
                 FinalizeResponse.class
         );
 
+        String recommendTitle = null;
+        String recommendGenre = null;
+
+        RecommendDTO recommend = res.getRecommend();
+
+        if (recommend != null) {
+            recommendTitle = recommend.getRecommendation();
+
+            // type 기반으로 genre 비슷한 개념 만들어줌
+            // (음악 / 도서 구분용)
+            recommendGenre = recommend.getType();
+        }
+
         return AiFinalizeResponseDTO.builder()
                 .content(res.getFinalText())
                 .emotion(res.getDominantEmotion())
-                .recommendTitle(res.getMusic().get("recommendation"))
-                .recommendGenre(res.getMusic().get("genre"))
+                .recommendTitle(recommendTitle)
+                .recommendGenre(recommendGenre)
                 .build();
     }
 }

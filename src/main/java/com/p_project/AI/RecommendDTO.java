@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FinalizeResponse {
-    private String finalText;
-    private String dominantEmotion;
-    private RecommendDTO recommend;
+public class RecommendDTO {
+    private String type;
+    private String emotion;
+    private String recommendation;
 }
