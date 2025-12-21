@@ -31,7 +31,7 @@ bin/
 *.log
 
 # --- 실행 환경 파일 (DB, API키 등) ---
-.env
+../.env
 #application-*.yml
 #application-*.properties
 #.env 파일에서 전부 관리해서 이그노어x
