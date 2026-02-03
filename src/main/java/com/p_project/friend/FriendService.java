@@ -2,6 +2,8 @@ package com.p_project.friend;
 
 import com.p_project.calendar.CalendarDTO;
 import com.p_project.calendar.CalendarService;
+import com.p_project.calendar.DailyWritingItemDTO;
+import com.p_project.profile.ProfileService;
 import com.p_project.user.UserDTO;
 import com.p_project.user.UserEntity;
 import com.p_project.user.UserService;
@@ -12,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -21,6 +24,7 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final UserService userService;
     private final CalendarService calendarService;
+    private final ProfileService profileService;
 
     public void addFriend(FriendDTO friendDTO){
 
@@ -38,7 +42,13 @@ public class FriendService {
         List<UserEntity> users = friendRepository.findMutualFriends(userId);
 
         return users.stream()
-                .map(UserDTO::fromEntity)
+                .map(user -> {
+                    UserDTO dto = UserDTO.fromEntity(user);
+                    profileService.getProfile(user.getId())
+                            .map(p -> p.getImageUrl())
+                            .ifPresent(dto::setProfileImageUrl);
+                    return dto;
+                })
                 .toList();
     }
 
@@ -46,7 +56,13 @@ public class FriendService {
         List<UserEntity> users = friendRepository.findPendingRequestSenders(userId);
 
         return users.stream()
-                .map(UserDTO::fromEntity)
+                .map(user -> {
+                    UserDTO dto = UserDTO.fromEntity(user);
+                    profileService.getProfile(user.getId())
+                            .map(p -> p.getImageUrl())
+                            .ifPresent(dto::setProfileImageUrl);
+                    return dto;
+                })
                 .toList();
     }
 
@@ -72,6 +88,23 @@ public class FriendService {
 
     public CalendarDTO getFriendCalendarSummary(Long userId, Long friendId, LocalDate date) {
         return calendarService.getFriendCalendarSummary(userId, friendId, date);
+    }
+
+    /** 서로 친구인지 (수락된 상태) */
+    public boolean areMutualFriends(Long userId, Long friendId) {
+        if (Objects.equals(userId, friendId)) return true;
+        Integer a = friendRepository.existsFriendship(userId, friendId);
+        Integer b = friendRepository.existsFriendship(friendId, userId);
+        return (a != null && a >= 1) && (b != null && b >= 1);
+    }
+
+    /** 친구의 해당 날짜 글 목록 (친구만 조회 가능) */
+    public List<DailyWritingItemDTO> getFriendDailyWritings(Long userId, Long friendId, LocalDate date) {
+        if (!areMutualFriends(userId, friendId)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    org.springframework.http.HttpStatus.FORBIDDEN, "Not friends or not allowed");
+        }
+        return calendarService.getDailyWritings(friendId, date);
     }
 
 }

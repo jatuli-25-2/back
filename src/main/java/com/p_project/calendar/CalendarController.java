@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -24,6 +25,14 @@ public class CalendarController {
                                                           @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         CalendarDTO calendarDTO = calendarService.getCalendarSummary(userId, date);
         return ResponseEntity.ok(calendarDTO);
+    }
+
+    /** 해당 날짜에 쓴 글 목록 (타입, 날짜, 제목, 감정). 글 클릭 시 해당 글 상세로 이동할 때 id 사용 */
+    @GetMapping("/daily")
+    public ResponseEntity<List<DailyWritingItemDTO>> getDailyWritings(
+            @RequestParam Long userId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return ResponseEntity.ok(calendarService.getDailyWritings(userId, date));
     }
 
 }

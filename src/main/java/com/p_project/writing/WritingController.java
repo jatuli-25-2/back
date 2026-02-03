@@ -34,9 +34,20 @@ public class WritingController {
         return writingService.finalizeWriting(request);
     }
 
+    @PostMapping("/title")
+    public TitleResponseDTO title(@RequestBody TitleRequestDTO request) {
+        return writingService.handleTitle(request);
+    }
+
     @PostMapping("/feedback")
     public FeedbackResponDTO feedback(@RequestBody FeedbackRequestDTO request) {
         return writingService.handleFeedback(request);
+    }
+
+    @GetMapping("/{id}")
+    public WritingDetailDTO getWritingDetail(Authentication auth, @PathVariable Long id) {
+        CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
+        return writingService.getWritingDetail(id, principal.getUserId());
     }
 
     @PostMapping("/{id}/complete")

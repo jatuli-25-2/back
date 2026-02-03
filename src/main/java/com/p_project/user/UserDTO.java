@@ -25,6 +25,9 @@ public class UserDTO {
 
     private String email;
 
+    /** 프로필 이미지 URL (profile 테이블 image_url) */
+    private String profileImageUrl;
+
     @Builder.Default
     private String role = "USER";
 

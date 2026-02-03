@@ -2,6 +2,7 @@
 build/
 out/
 bin/
+.gradle/
 
 # --- Gradle Wrapper는 반드시 포함 ---
 !gradlew
@@ -48,3 +49,5 @@ bin/
 !src/test/
 !src/main/resources/**
 !src/test/resources/**
+
+.env

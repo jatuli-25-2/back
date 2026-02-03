@@ -3,12 +3,14 @@ package com.p_project.writing;
 import com.p_project.AI.AiFinalizeResponseDTO;
 import com.p_project.AI.AiResponseDTO;
 import com.p_project.AI.AiService;
+import com.p_project.friend.FriendService;
 import com.p_project.message.MessageRepository;
 import com.p_project.message.MessagesEntity;
 import com.p_project.message.feedback.FeedbackRequestDTO;
 import com.p_project.message.feedback.FeedbackResponDTO;
 import com.p_project.message.finalize.FinalizeRequestDTO;
 import com.p_project.message.finalize.FinalizeResponseDTO;
+import com.p_project.AI.TitleResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -29,6 +31,7 @@ public class WritingSessionService {
     private final WritingSessionRepository writingSessionRepository;
     private final MessageRepository messageRepository;
     private final AiService aiService;
+    private final FriendService friendService;
 
     private final int INITIAL_QUESTIONS = 5;
 
@@ -171,6 +174,45 @@ public class WritingSessionService {
     // ---------------------------------------
     // 4) 추가 질문 요청
     // ---------------------------------------
+    // ---------------------------------------
+    // 제목: AI 추천 3개 조회 / 사용자가 고른 제목 저장
+    // ---------------------------------------
+    public TitleResponseDTO handleTitle(TitleRequestDTO request) {
+
+        WritingSessionEntity session = writingSessionRepository.findById(request.getSessionId())
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+
+        String chosenTitle = request.getTitle();
+        if (chosenTitle != null && !chosenTitle.isBlank()) {
+            // 사용자가 고른 제목(추천 중 하나 또는 직접 입력) → 그대로 글 제목으로 저장
+            String toSave = chosenTitle.length() > 100 ? chosenTitle.substring(0, 100) : chosenTitle.trim();
+            session.setTitle(toSave);
+            writingSessionRepository.save(session);
+            return TitleResponseDTO.builder().title(toSave).build();
+        }
+
+        // 제목 없이 요청 → AI에게 제목 3개 받아서 반환
+        String finalText = session.getContent();
+        String dominantEmotion = session.getEmotion();
+        if (finalText == null || finalText.isBlank()) {
+            throw new RuntimeException("Session has no content. Finalize first.");
+        }
+
+        TitleResponse ai = aiService.callTitleApi(
+                session.getType().name(),
+                finalText,
+                dominantEmotion,
+                null,
+                null,
+                null
+        );
+
+        return TitleResponseDTO.builder().titles(ai.getTitles()).build();
+    }
+
+    // ---------------------------------------
+    // 4) 추가 질문 요청
+    // ---------------------------------------
     public FeedbackResponDTO handleFeedback(FeedbackRequestDTO request) {
 
         WritingSessionEntity session = writingSessionRepository.findById(request.getSessionId())
@@ -233,5 +275,29 @@ public class WritingSessionService {
 
         entity.setStatus(WritingSessionEntity.WritingStatus.COMPLETE);
         return writingSessionRepository.save(entity);
+    }
+
+    /**
+     * 글 한 건 상세 조회 (캘린더에서 글 클릭 시 해당 글로 이동한 화면용). 본인 글 또는 친구 글 조회 가능.
+     */
+    public WritingDetailDTO getWritingDetail(Long id, Long userId) {
+        WritingSessionEntity entity = writingSessionRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Writing not found with id: " + id));
+        boolean isOwner = entity.getUserId().equals(userId);
+        boolean isFriend = friendService.areMutualFriends(userId, entity.getUserId());
+        if (!isOwner && !isFriend) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Not allowed to view this writing");
+        }
+        return WritingDetailDTO.builder()
+                .id(entity.getId())
+                .type(entity.getType().name())
+                .createdAt(entity.getCreatedAt())
+                .date(entity.getCreatedAt() != null ? entity.getCreatedAt().toLocalDate() : null)
+                .title(entity.getTitle())
+                .content(entity.getContent())
+                .emotion(entity.getEmotion())
+                .recommendTitle(entity.getRecommendTitle())
+                .recommendGenre(entity.getRecommendGenre())
+                .build();
     }
 }

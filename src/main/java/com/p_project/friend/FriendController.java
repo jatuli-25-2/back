@@ -1,6 +1,7 @@
 package com.p_project.friend;
 
 import com.p_project.calendar.CalendarDTO;
+import com.p_project.calendar.DailyWritingItemDTO;
 import com.p_project.oauth2.CustomOAuth2User;
 import com.p_project.user.UserDTO;
 import lombok.RequiredArgsConstructor;
@@ -82,5 +83,16 @@ public class FriendController {
         CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
         CalendarDTO calendar = friendService.getFriendCalendarSummary(principal.getUserId(), friendId, date);
         return ResponseEntity.ok(calendar);
+    }
+
+    /** 친구 캘린더에서 날짜 클릭 시: 해당 날짜에 친구가 쓴 글 목록 (친구만 조회 가능) */
+    @GetMapping("/calendar/daily")
+    public ResponseEntity<List<DailyWritingItemDTO>> getFriendDailyWritings(
+            Authentication auth,
+            @RequestParam Long friendId,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
+    ) {
+        CustomOAuth2User principal = (CustomOAuth2User) auth.getPrincipal();
+        return ResponseEntity.ok(friendService.getFriendDailyWritings(principal.getUserId(), friendId, date));
     }
 }

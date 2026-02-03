@@ -84,4 +84,27 @@ public class AiService {
                 .recommendGenre(recommendGenre)
                 .build();
     }
+
+    // -----------------------------
+    // 제목 추천 / 확정
+    // -----------------------------
+    public TitleResponse callTitleApi(String mode, String finalText, String dominantEmotion,
+                                      java.util.List<String> titles, Integer selectedIndex, String customTitle) {
+
+        TitleRequest req = TitleRequest.builder()
+                .mode(mode)
+                .finalText(finalText)
+                .dominantEmotion(dominantEmotion)
+                .titles(titles)
+                .selectedIndex(selectedIndex)
+                .customTitle(customTitle)
+                .build();
+
+        TitleResponse res = restTemplate.postForObject(
+                AI_SERVER_URL + "/api/ai/title",
+                req,
+                TitleResponse.class
+        );
+        return res;
+    }
 }
